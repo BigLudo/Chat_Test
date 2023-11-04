@@ -17,7 +17,8 @@ public class Main {
         srvhHandler.register(client2);
         srvhHandler.register(client3);
 
-        client1.sendMessage("Test");
+        client1.sendMessage("Testar...");
+
 /*
         try {
             ServerSocket ss = new ServerSocket(8080);
