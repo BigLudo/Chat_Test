@@ -1,5 +1,3 @@
-package main.java;
-
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -19,9 +17,11 @@ public class Main {
 
         client1.sendMessage("Testar...mera...2");
 
-/*
+        client1.sendMessage("Ytterligare push test");
+
+
         try {
-            ServerSocket ss = new ServerSocket(8080);
+            ServerSocket ss = new ServerSocket(8000);
             Socket client = ss.accept();
             client.getOutputStream().write("testar".getBytes());
             client.getOutputStream().flush();
@@ -33,9 +33,6 @@ public class Main {
             System.out.println("Error : " + e);
             e.printStackTrace();
         }
-*/
-        System.out.println("överföring fungerar");
-
     }
 }
 
