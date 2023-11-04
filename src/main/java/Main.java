@@ -17,7 +17,7 @@ public class Main {
         srvhHandler.register(client2);
         srvhHandler.register(client3);
 
-        client1.sendMessage("Testar...mera...");
+        client1.sendMessage("Testar...mera...ö");
 
 /*
         try {
