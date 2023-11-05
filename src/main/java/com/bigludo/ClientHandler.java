@@ -1,15 +1,18 @@
-package main.java;
+package com.bigludo;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ClientHandler implements IClient{
 
-    private String ID;
-    private IServer server;
-    private ILog log;
+    private static final Logger log = LogManager.getLogger(ClientHandler.class);
 
-    public ClientHandler (String id, IServer srv, ILog lg) {
+    private String ID;
+    private IServer server;    
+
+    public ClientHandler (String id, IServer srv) {
         ID = id;
         server = srv;
-        log = lg;
     }
 
     public void sendMessage(String message) {

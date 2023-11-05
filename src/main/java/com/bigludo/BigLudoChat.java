@@ -1,25 +1,30 @@
+package com.bigludo;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Main {
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+public class BigLudoChat {
+
+    private static final Logger log = LogManager.getLogger(BigLudoChat.class);
+
     public static void main(String[] args) {
+        log.info("BigLudo Chat v1.0.0");
 
-        Logger logger = new Logger(false);
-
-        ServerHandler srvhHandler = new ServerHandler(logger);
-        ClientHandler client1 = new ClientHandler("Ludde", srvhHandler, logger);
-        ClientHandler client2 = new ClientHandler("Freddan", srvhHandler, logger);
-        ClientHandler client3 = new ClientHandler("Oliver", srvhHandler, logger);
+        ServerHandler srvhHandler = new ServerHandler();
+        ClientHandler client1 = new ClientHandler("Ludde", srvhHandler);
+        ClientHandler client2 = new ClientHandler("Freddan", srvhHandler);
+        ClientHandler client3 = new ClientHandler("Oliver", srvhHandler);
 
         srvhHandler.register(client1);
         srvhHandler.register(client2);
         srvhHandler.register(client3);
 
-        client1.sendMessage("Testar...mera...2");
-
+        client1.sendMessage("Testar...");
         client1.sendMessage("Ytterligare push test");
 
-
+        /*
         try {
             ServerSocket ss = new ServerSocket(8000);
             Socket client = ss.accept();
@@ -33,6 +38,7 @@ public class Main {
             System.out.println("Error : " + e);
             e.printStackTrace();
         }
+        */
     }
 }
 
