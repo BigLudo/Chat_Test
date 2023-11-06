@@ -13,6 +13,9 @@ public class BigLudoChat {
         log.info("BigLudo Chat v1.0.0");
 
         ServerHandler srvhHandler = new ServerHandler();
+        Thread serverThread = new Thread();
+        serverThread.start();
+
         ClientHandler client1 = new ClientHandler("Ludde", srvhHandler);
         ClientHandler client2 = new ClientHandler("Freddan", srvhHandler);
         ClientHandler client3 = new ClientHandler("Oliver", srvhHandler);
