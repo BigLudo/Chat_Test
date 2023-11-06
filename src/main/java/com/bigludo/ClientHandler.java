@@ -16,6 +16,7 @@ public class ClientHandler implements IClient{
         ID = id;
         clientSocket = cs;
         server = srv;
+        log.info("ClientHandler created " + id);
     }
 
     public void sendMessage(String message) {
