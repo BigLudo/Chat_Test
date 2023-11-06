@@ -26,16 +26,16 @@ public class ServerHandler implements IServer, Runnable{
             }
         }
     }
-
+    
     @Override
     public void run() {
+        boolean stopped = false;
         try {
-            ServerSocket serverSocket = new ServerSocket(8000);
-
-            while (true) {
-                Thread clientThread = new Thread();
-                clientThread.start();
-            }
+            do {
+                ServerSocket serverSocket = new ServerSocket(8000);
+                Socket clientSocket = serverSocket.accept();
+                clientHandlers.add(new ClientHandler("ett-namn", clientSocket, this));
+            } while(!stopped);
         } catch (IOException e) {
             e.printStackTrace();
         }
