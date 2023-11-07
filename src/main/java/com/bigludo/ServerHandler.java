@@ -27,6 +27,10 @@ public class ServerHandler implements IServer, Runnable{
         }
     }
 
+    public int getActiveClients() {
+        return clientHandlers.size();
+    }
+
     @Override
     public void run() {
         boolean stopped = false;

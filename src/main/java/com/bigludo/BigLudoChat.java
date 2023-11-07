@@ -20,7 +20,7 @@ public class BigLudoChat {
         try {
             while(serverThread.isAlive()){
                 Thread.sleep(1000);
-                log.debug("Thread alive...");
+                log.debug("Number of active clients: " + srvhHandler.getActiveClients());
             }
         } catch(Exception e){
             log.debug("Exception, thread quitted or error...");
