@@ -13,6 +13,7 @@ public class ClientHandler implements IClient, Runnable{
     private Socket clientSocket;
     private IServer server;
     private BufferedReader br;
+    private Thread clientThread;
 
     public ClientHandler (String id, Socket cs, IServer srv) {
         ID = id;
@@ -21,6 +22,8 @@ public class ClientHandler implements IClient, Runnable{
         log.info("ClientHandler created " + id);
 
         try {
+            clientThread = new Thread(this);
+            clientThread.start();
             br = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         } catch (IOException e) {
             log.error("Error init BufferedReader: " + e.getMessage());
@@ -34,14 +37,14 @@ public class ClientHandler implements IClient, Runnable{
     @Override
     public void recieveMessage(String message) {
         System.out.println(ID + ", " + message);
-        log.debug("Receiving message" + message);
+        log.debug("Receiving message: " + "[" + message + "]");
     }
     @Override
     public String getId() {
         return ID;
     }
-
-    public void listenToMessages() {
+    @Override
+    public void run() {
         try {
             while (true) {
                 String message = br.readLine();
@@ -56,10 +59,5 @@ public class ClientHandler implements IClient, Runnable{
         } catch (IOException e) {
             log.error("Error intercepting message: " + e.getMessage());
         }
-    }
-
-    @Override
-    public void run() {
-        listenToMessages();
     }
 }
