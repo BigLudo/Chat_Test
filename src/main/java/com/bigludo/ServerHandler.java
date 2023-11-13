@@ -22,7 +22,7 @@ public class ServerHandler implements IServer, Runnable{
     public void sendMessage(String message, IClient sender) {
         for (IClient client : clients){
             if (client != sender) {
-                client.recieveMessage(message);
+                client.recieveMessage();
             }
         }
     }
