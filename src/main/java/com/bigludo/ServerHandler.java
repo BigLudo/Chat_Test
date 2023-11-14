@@ -27,6 +27,14 @@ public class ServerHandler implements IServer, Runnable{
         }
     }
 
+    @Override
+    public void broadcastMessage(String message) {
+        for (ClientHandler clientHandler : clientHandlers) {
+            clientHandler.sendMessage(message);
+        }
+
+    }
+
     public int getActiveClients() {
         return clientHandlers.size();
     }

@@ -2,5 +2,7 @@ package com.bigludo;
 
 public interface IServer {
 
-    public void sendMessage (String message, IClient cnt);
+    void sendMessage (String message, IClient cnt);
+
+    void broadcastMessage (String message);
 }

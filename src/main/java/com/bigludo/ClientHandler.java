@@ -3,6 +3,7 @@ package com.bigludo;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,9 +32,18 @@ public class ClientHandler implements IClient, Runnable {
         }
     }
 
-    public void sendMessage(String message) {
+    /*public void sendMessage(String message) {
         server.sendMessage(message, this);
-        log.info("Sending message");
+        log.info("Sending message: " + message);
+    }*/
+
+    public void sendMessage (String message) {
+        try {
+            PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true);
+            writer.println(message);
+        } catch (IOException e) {
+            log.error("Error sending message: " + e.getMessage());
+        }
     }
 
     @Override
@@ -44,12 +54,15 @@ public class ClientHandler implements IClient, Runnable {
             if (message == null && !disconnected) {
                 disconnected = true;
                 log.info("Client disconnected: " + ID);
-            }
-
-            if (!disconnected) {
-                System.out.println(ID + ", " + message);
+            } else {
+                System.out.println(ID + ": " + message);
                 log.debug("Receiving message: " + "[" + message + "]");
             }
+
+           // if (!disconnected) {
+             //   System.out.println(ID + ", " + message);
+
+            //}
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
