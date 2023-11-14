@@ -8,10 +8,8 @@ public class BigLudoChat {
     private static final Logger log = LogManager.getLogger(BigLudoChat.class);
 
     public static void main(String[] args) {
-        log.info("BigLudo Chat v1.0.0");
+        log.info("BigLudo Chat v1.0.1");
 
-
-        int startActiveClients = 0;
         ServerHandler srvhHandler = new ServerHandler();
         Thread serverThread = new Thread(srvhHandler);
         serverThread.start();
@@ -21,12 +19,6 @@ public class BigLudoChat {
                 Thread.sleep(1000);
                 int currentActiveClients = srvhHandler.getActiveClients();
                 log.debug("Number of active clients: " + srvhHandler.getActiveClients());
-
-                if (startActiveClients < currentActiveClients) {
-                    srvhHandler.broadcastMessage("Welcome to the server!");
-                }
-
-                startActiveClients = currentActiveClients;
             }
         } catch(Exception e){
             log.debug("Exception, thread quitted or error...");
