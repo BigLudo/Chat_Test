@@ -47,7 +47,9 @@ public class ServerHandler implements IServer, Runnable{
 
             do {
                 Socket clientSocket = serverSocket.accept();
-                clientHandlers.add(new ClientHandler("ett-namn", clientSocket, this));
+                ClientHandler clientHandler = new ClientHandler("ett-namn", clientSocket, this);
+                clientHandler.sendMessage("Welcome to the server!");
+                clientHandlers.add(clientHandler);
             } while(!stopped);
         } catch (IOException e) {
             e.printStackTrace();
