@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -24,7 +26,7 @@ public class ClientHandler implements IClient, Runnable {
         log.info("ClientHandler created " + id);
 
         try {
-            br = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            br = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), StandardCharsets.UTF_8));
             clientThread = new Thread(this);
             clientThread.start();
         } catch (IOException e) {
@@ -32,41 +34,28 @@ public class ClientHandler implements IClient, Runnable {
         }
     }
 
-    /*public void sendMessage(String message) {
-        server.sendMessage(message, this);
-        log.info("Sending message: " + message);
-    }*/
-
-    public void sendMessage (String message) {
+    public void sendMessage(String message) {
         try {
             PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true);
             writer.println(message);
+
         } catch (IOException e) {
             log.error("Error sending message: " + e.getMessage());
         }
     }
 
     @Override
-    public void recieveMessage() {
-        try {
-            String message = br.readLine();
+    public void receiveMessage(String message) {
 
-            if (message == null && !disconnected) {
-                disconnected = true;
-                log.info("Client disconnected: " + ID);
-            } else {
-                System.out.println(ID + ": " + message);
-                log.debug("Receiving message: " + "[" + message + "]");
-            }
-
-           // if (!disconnected) {
-             //   System.out.println(ID + ", " + message);
-
-            //}
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        for (byte b : message.getBytes()) {
+            System.out.print(b + " ");
         }
+        System.out.println();
+
+        System.out.println(ID + ": " + message);
+        log.debug("Receiving message: " + "[" + message + "]");
     }
+
 
     @Override
     public String getId() {
@@ -77,9 +66,22 @@ public class ClientHandler implements IClient, Runnable {
     public void run() {
         try {
             while (!disconnected) {
-                recieveMessage();
+                String message = br.readLine();
+                if (message == null && !disconnected) {
+                    disconnected = true;
+                    log.info("Client disconnected: " + ID);
+
+                } else {
+                    System.out.println(ID + ": " + message);
+
+                    server.broadcastMessage(ID + ": " + message);
+
+                    if (!ID.equals("ett-namn")) {
+                        sendMessage(ID + ": " + message);
+                    }
+                }
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             log.error("Error intercepting message: " + e.getMessage());
         }
     }

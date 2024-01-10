@@ -18,11 +18,12 @@ public class ServerHandler implements IServer, Runnable{
         log.info("Register client " + client.getId());
     }
 
+
     @Override
     public void sendMessage(String message, IClient sender) {
         for (IClient client : clients){
             if (client != sender) {
-                client.recieveMessage();
+                client.receiveMessage(message);
             }
         }
     }
@@ -32,7 +33,10 @@ public class ServerHandler implements IServer, Runnable{
         for (ClientHandler clientHandler : clientHandlers) {
             clientHandler.sendMessage(message);
         }
+    }
 
+    public void handleClientMessage(String message, ClientHandler sender) {
+        broadcastMessage(sender.getId() + ": " + message);
     }
 
     public int getActiveClients() {
@@ -50,6 +54,9 @@ public class ServerHandler implements IServer, Runnable{
                 ClientHandler clientHandler = new ClientHandler("ett-namn", clientSocket, this);
                 clientHandler.sendMessage("Welcome to the server!");
                 clientHandlers.add(clientHandler);
+
+                broadcastMessage("User " + clientHandler.getId() + " joined the chat.");
+
             } while(!stopped);
         } catch (IOException e) {
             e.printStackTrace();

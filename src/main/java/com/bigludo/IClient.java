@@ -2,7 +2,7 @@ package com.bigludo;
 
 public interface IClient {
 
-    void recieveMessage ();
+    void receiveMessage(String message);
 
     String getId();
 }

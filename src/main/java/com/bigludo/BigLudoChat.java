@@ -17,7 +17,6 @@ public class BigLudoChat {
         try {
             while(serverThread.isAlive()){
                 Thread.sleep(1000);
-                int currentActiveClients = srvhHandler.getActiveClients();
                 log.debug("Number of active clients: " + srvhHandler.getActiveClients());
             }
         } catch(Exception e){
