@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -13,7 +15,8 @@ public class ClientHandler implements IClient, Runnable {
     private String ID;
     private Socket clientSocket;
     private IServer server;
-    private BufferedReader br;
+    private BufferedReader clientReader;
+    private PrintWriter clientSender;
     private Thread clientThread;
     private boolean disconnected = false;
 
@@ -24,49 +27,38 @@ public class ClientHandler implements IClient, Runnable {
         log.info("ClientHandler created " + id);
 
         try {
-            br = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            clientReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), StandardCharsets.UTF_8));
+            clientSender = new PrintWriter(clientSocket.getOutputStream(), true);
+
             clientThread = new Thread(this);
             clientThread.start();
         } catch (IOException e) {
-            log.error("Error init BufferedReader: " + e.getMessage());
-        }
-    }
-
-    /*public void sendMessage(String message) {
-        server.sendMessage(message, this);
-        log.info("Sending message: " + message);
-    }*/
-
-    public void sendMessage (String message) {
-        try {
-            PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true);
-            writer.println(message);
-        } catch (IOException e) {
-            log.error("Error sending message: " + e.getMessage());
+            log.error("Error initiation : " + e.getMessage());
         }
     }
 
     @Override
-    public void recieveMessage() {
-        try {
-            String message = br.readLine();
+    public void sendMessage(String message) {
+        clientSender.println(message);
+    }
 
+    @Override
+    public String receiveMessage() {
+        String message = null;
+        try {
+            message = clientReader.readLine();
             if (message == null && !disconnected) {
                 disconnected = true;
                 log.info("Client disconnected: " + ID);
-            } else {
-                System.out.println(ID + ": " + message);
-                log.debug("Receiving message: " + "[" + message + "]");
             }
-
-           // if (!disconnected) {
-             //   System.out.println(ID + ", " + message);
-
-            //}
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            log.error("Error intercepting message: " + e.getMessage());
         }
+
+        log.debug("Receiving message, ID : " + getId() + " [" + message + "]");
+        return message;
     }
+
 
     @Override
     public String getId() {
@@ -77,10 +69,12 @@ public class ClientHandler implements IClient, Runnable {
     public void run() {
         try {
             while (!disconnected) {
-                recieveMessage();
+                String message = receiveMessage();
+                server.sendMessage(message, this);
             }
         } catch (Exception e) {
             log.error("Error intercepting message: " + e.getMessage());
         }
+        log.info("Client stopped listen on incoming messages, ID: " + getId());
     }
 }
