@@ -20,11 +20,10 @@ public class ClientHandler implements IClient, Runnable {
     private Thread clientThread;
     private boolean disconnected = false;
 
-    public ClientHandler(String id, Socket cs, IServer srv) {
-        ID = id;
+    public ClientHandler(Socket cs, IServer srv) {
         clientSocket = cs;
         server = srv;
-        log.info("ClientHandler created " + id);
+        log.info("ClientHandler created ");
 
         try {
             clientReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), StandardCharsets.UTF_8));
@@ -68,6 +67,11 @@ public class ClientHandler implements IClient, Runnable {
     @Override
     public void run() {
         try {
+            // Wait for client to enter their desired ID
+            ID = receiveMessage();
+            server.broadcastMessage("User " + ID + " joined the chat."); // Inform other clients about the new user
+
+            // Continue normal message handling
             while (!disconnected) {
                 String message = receiveMessage();
                 server.sendMessage(message, this);

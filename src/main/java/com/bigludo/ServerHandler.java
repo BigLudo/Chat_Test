@@ -40,12 +40,11 @@ public class ServerHandler implements IServer, Runnable{
 
             do {
                 Socket clientSocket = serverSocket.accept();
-                IClient client = new ClientHandler(getClientId(), clientSocket, this);
-                client.sendMessage("Welcome " + client.getId() + " to the server!");
+                IClient client = new ClientHandler(clientSocket, this); // Modified to remove auto-generated client ID
                 clients.add(client);
 
-                // Inform all clients
-                broadcastMessage("User " + client.getId() + " joined the chat.");
+                // Send welcome message and prompt for client ID
+                client.sendMessage("Welcome to the server! Please enter your desired client ID:");
 
             } while(!stopped);
 
