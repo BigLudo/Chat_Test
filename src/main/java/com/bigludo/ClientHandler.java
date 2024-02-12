@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
 
 public class ClientHandler implements IClient, Runnable {
     private static final Logger log = LogManager.getLogger(ClientHandler.class);
-    private String ID;
+    public String ID;
     private Socket clientSocket;
     private IServer server;
     private BufferedReader clientReader;
@@ -20,10 +20,11 @@ public class ClientHandler implements IClient, Runnable {
     private Thread clientThread;
     private boolean disconnected = false;
 
-    public ClientHandler(Socket cs, IServer srv) {
+    public ClientHandler(String id, Socket cs, IServer srv) {
+        ID = id;
         clientSocket = cs;
         server = srv;
-        log.info("ClientHandler created ");
+        log.info("ClientHandler created " + id);
 
         try {
             clientReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), StandardCharsets.UTF_8));
@@ -67,11 +68,6 @@ public class ClientHandler implements IClient, Runnable {
     @Override
     public void run() {
         try {
-            // Wait for client to enter their desired ID
-            ID = receiveMessage();
-            server.broadcastMessage("User " + ID + " joined the chat."); // Inform other clients about the new user
-
-            // Continue normal message handling
             while (!disconnected) {
                 String message = receiveMessage();
                 server.sendMessage(message, this);
@@ -81,4 +77,5 @@ public class ClientHandler implements IClient, Runnable {
         }
         log.info("Client stopped listen on incoming messages, ID: " + getId());
     }
+
 }

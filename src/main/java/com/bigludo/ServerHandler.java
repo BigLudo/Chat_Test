@@ -14,20 +14,48 @@ public class ServerHandler implements IServer, Runnable{
 
     @Override
     public void sendMessage(String message, IClient sender) {
-        for (IClient client : clients){
-            if (client != sender) {
-                client.sendMessage(sender.getId() + " : " + message);
+        if (message.startsWith("/")) {
+            // Handle command
+            handleCommand(message, sender);
+        } else {
+            // Broadcast regular message
+            for (IClient client : clients){
+                if (client != sender) {
+                    client.sendMessage(sender.getId() + " : " + message);
+                }
             }
         }
     }
 
-    private String getClientId() {
-        return "Client#"+System.currentTimeMillis(); // Just a random unique name for now... Issue #14
-    }
+    private void handleCommand(String message, IClient sender) {
+        String[] parts = message.split(" ", 2);
+        // Split the message into two parts, the command and the argument, the limit should be 2
+        // since we only want to split the message into two parts.
 
-    public void broadcastMessage(String message) {
-        for (IClient client : clients){
-            client.sendMessage(message);
+        String command = parts[0].substring(1);
+        // Should ignore the "/" sign and focus on command
+
+        String argument = parts.length > 1 ? parts[1] : null;
+        // Checks for argument
+
+        switch (command) {
+            case "name":
+                if (argument != null) {
+                    // If there is an argument, it will set the client's ID to the argument.
+                    ((ClientHandler)sender).ID = argument;
+                    broadcastMessage("User " + getClientId() + " changed their name to " + argument + ".");
+                } else {
+                    sender.sendMessage("Invalid command usage. Usage: /name <new name>");
+                }
+                break;
+
+            case "test":
+                broadcastMessage("Test command received.");
+                break;
+                //Test command, testing if logic works for other commands
+
+            default:
+                sender.sendMessage("Unknown command: " + command);
         }
     }
 
@@ -40,11 +68,12 @@ public class ServerHandler implements IServer, Runnable{
 
             do {
                 Socket clientSocket = serverSocket.accept();
-                IClient client = new ClientHandler(clientSocket, this); // Modified to remove auto-generated client ID
+                IClient client = new ClientHandler(getClientId(), clientSocket, this);
+                client.sendMessage("Welcome " + client.getId() + " to the server!");
                 clients.add(client);
 
-                // Send welcome message and prompt for client ID
-                client.sendMessage("Welcome to the server! Please enter your desired client ID:");
+                // Inform all clients that a user joined
+                broadcastMessage("User " + client.getId() + " joined the chat.");
 
             } while(!stopped);
 
@@ -52,6 +81,16 @@ public class ServerHandler implements IServer, Runnable{
 
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private String getClientId() {
+        return "Client#"+System.currentTimeMillis(); // Just a random unique name for now... Issue #14
+    }
+
+    public void broadcastMessage(String message) {
+        for (IClient client : clients){
+            client.sendMessage(message);
         }
     }
 }

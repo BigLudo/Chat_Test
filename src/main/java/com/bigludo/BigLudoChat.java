@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class BigLudoChat {
+
     private static final Logger log = LogManager.getLogger(BigLudoChat.class);
 
     public static void main(String[] args) {
@@ -23,4 +24,3 @@ public class BigLudoChat {
         log.info("Chat terminated...");
     }
 }
-
