@@ -12,13 +12,17 @@ import org.apache.logging.log4j.Logger;
 
 public class ClientHandler implements IClient, Runnable {
     private static final Logger log = LogManager.getLogger(ClientHandler.class);
-    public String ID;
+    private String ID;
     private Socket clientSocket;
     private IServer server;
     private BufferedReader clientReader;
     private PrintWriter clientSender;
     private Thread clientThread;
     private boolean disconnected = false;
+
+    public void setID (String newId) {
+        this.ID = newId;
+    }
 
     public ClientHandler(String id, Socket cs, IServer srv) {
         ID = id;

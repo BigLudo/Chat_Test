@@ -28,34 +28,39 @@ public class ServerHandler implements IServer, Runnable{
     }
 
     private void handleCommand(String message, IClient sender) {
-        String[] parts = message.split(" ", 2);
-        // Split the message into two parts, the command and the argument, the limit should be 2
-        // since we only want to split the message into two parts.
+        try {
+            String[] parts = message.split(" ", 2);
+            // Split the message into two parts, the command and the argument, the limit should be 2
+            // since we only want to split the message into two parts.
 
-        String command = parts[0].substring(1);
-        // Should ignore the "/" sign and focus on command
+            String command = parts[0].substring(1);
+            // Should ignore the "/" sign and focus on command
 
-        String argument = parts.length > 1 ? parts[1] : null;
-        // Checks for argument
+            String argument = parts.length > 1 ? parts[1] : null;
+            // Checks for argument
 
-        switch (command) {
-            case "name":
-                if (argument != null) {
-                    // If there is an argument, it will set the client's ID to the argument.
-                    ((ClientHandler)sender).ID = argument;
-                    broadcastMessage("User " + getClientId() + " changed their name to " + argument + ".");
-                } else {
-                    sender.sendMessage("Invalid command usage. Usage: /name <new name>");
-                }
-                break;
+            switch (command) {
+                case "name":
+                    if (argument != null) {
+                        // If there is an argument, it will set the client's ID to the argument.
+                        ((ClientHandler)sender).setID(argument); // ID can now be set to private
+                        broadcastMessage("User " + getClientId() + " changed their name to " + argument + ".");
+                    } else {
+                        sender.sendMessage("Invalid command usage. Usage: /name <new name>");
+                    }
+                    break;
 
-            case "test":
-                broadcastMessage("Test command received.");
-                break;
+                case "test":
+                    broadcastMessage("Test command received.");
+                    break;
                 //Test command, testing if logic works for other commands
 
-            default:
-                sender.sendMessage("Unknown command: " + command);
+                default:
+                    sender.sendMessage("Unknown command: " + command);
+            }
+        } catch (Exception e) {
+            // Handle any exceptions that might occur during command processing
+            sender.sendMessage("Invalid command. Please check the syntax or try again later.");
         }
     }
 
