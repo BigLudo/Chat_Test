@@ -20,6 +20,10 @@ public class ClientHandler implements IClient, Runnable {
     private Thread clientThread;
     private boolean disconnected = false;
 
+    public void setID (String newId) {
+        this.ID = newId;
+    }
+
     public ClientHandler(String id, Socket cs, IServer srv) {
         ID = id;
         clientSocket = cs;
@@ -77,4 +81,5 @@ public class ClientHandler implements IClient, Runnable {
         }
         log.info("Client stopped listen on incoming messages, ID: " + getId());
     }
+
 }

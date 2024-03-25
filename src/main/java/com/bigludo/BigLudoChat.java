@@ -24,4 +24,3 @@ public class BigLudoChat {
         log.info("Chat terminated...");
     }
 }
-
